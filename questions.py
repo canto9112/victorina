@@ -1,5 +1,6 @@
 from environs import Env
 from pprint import pprint
+import random
 
 
 def open_file(file_path):
@@ -8,7 +9,8 @@ def open_file(file_path):
     return content
 
 
-def get_questions(file):
+def get_questions():
+    file = open_file('quiz-questions/12koll12.txt')
     content = file.split('\n\n')
     block_questions = []
     block_answers = []
@@ -24,14 +26,19 @@ def get_questions(file):
     return questions
 
 
+def get_random_question():
+    questions = get_questions()
+    random_question = random.choice(list(questions.keys()))
+    return random_question
 
 
-if __name__ == '__main__':
-    env = Env()
-    env.read_env()
 
-    file = open_file('quiz-questions/12koll12.txt')
-    get_questions(file)
+# if __name__ == '__main__':
+#     env = Env()
+#     env.read_env()
+#
+#     get_random_question()
+
 
 
 
