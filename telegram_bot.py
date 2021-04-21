@@ -1,32 +1,34 @@
 from environs import Env
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import logging
-
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
+from telegram import ReplyKeyboardMarkup
+import questions
 
 
 def start(bot, update):
-    """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    user_name = update['message']['chat']['username']
+    custom_keyboard = [['Новый вопрос', 'Сдаться'],
+                       ['Мой счет']]
+    reply_markup = ReplyKeyboardMarkup(custom_keyboard)
+    update.message.reply_text(text=f'Привет {user_name}! Это бот для викторины!',
+                              reply_markup=reply_markup)
 
 
-def help(bot, update):
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+def send_message(bot, update):
+    user_message = update['message']['text']
+    question = questions.get_random_question()
+    print(user_message)
+    if user_message == 'Новый вопрос':
+        update.message.reply_text(question)
 
 
-def echo(bot, update):
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
+def start_bot(token):
+    updater = Updater(token)
 
-
-def error(bot, update, error):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, error)
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(MessageHandler(Filters.text, send_message))
+    updater.start_polling()
+    updater.idle()
 
 
 def main():
@@ -34,25 +36,7 @@ def main():
     env.read_env()
 
     telegam_token = env('TELEGRAM_TOKEN')
-
-    updater = Updater(telegam_token)
-
-    dp = updater.dispatcher
-
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
-
-    # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
-
-    # log all errors
-    dp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_polling()
-
-    updater.idle()
+    start_bot(telegam_token)
 
 
 if __name__ == '__main__':
