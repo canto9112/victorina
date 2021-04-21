@@ -2,6 +2,7 @@ from environs import Env
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
 import questions
+import reddis
 
 
 def start(bot, update):
@@ -15,10 +16,16 @@ def start(bot, update):
 
 def send_message(bot, update):
     user_message = update['message']['text']
+    user_id = update['message']['chat']['id']
+
     question = questions.get_random_question()
-    print(user_message)
+
+    db = reddis.connect_redis()
+
     if user_message == 'Новый вопрос':
+        reddis.record_user_question(db, user_id, question)
         update.message.reply_text(question)
+        print(reddis.get_user_question(db, user_id))
 
 
 def start_bot(token):
