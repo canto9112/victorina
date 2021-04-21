@@ -28,16 +28,21 @@ def get_questions():
 
 def get_random_question():
     questions = get_questions()
-    random_question = random.choice(list(questions.keys()))
-    return random_question
+    random_question, random_answer = random.choice(list(questions.items()))
+
+    question = ",".join(random_question.split('\n')[1:])
+    answer = ",".join(random_answer.split('\n')[1:])
+
+    return question, answer
 
 
+if __name__ == '__main__':
+    env = Env()
+    env.read_env()
 
-# if __name__ == '__main__':
-#     env = Env()
-#     env.read_env()
-#
-#     get_random_question()
+    random_question, answer = get_random_question()
+
+
 
 
 
