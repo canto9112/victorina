@@ -48,7 +48,7 @@ def get_clean_answer(answer):
     clean_answer = answer.split('.')[0]
     answer_explanation = get_explanation(clean_answer)
     if answer_explanation:
-        clean_answer = clean_answer.split(']')[1]
+        clean_answer = clean_answer.split(']')[1].strip()
         return clean_answer, answer_explanation
     else:
         return clean_answer, None
