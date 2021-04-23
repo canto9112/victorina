@@ -1,6 +1,7 @@
 from environs import Env
 from pprint import pprint
 import random
+import re
 
 
 def open_file(file_path):
@@ -10,7 +11,7 @@ def open_file(file_path):
 
 
 def get_questions():
-    file = open_file('quiz-questions/12koll12.txt')
+    file = open_file('quiz-questions/13voin.txt')
     content = file.split('\n\n')
     block_questions = []
     block_answers = []
@@ -32,19 +33,22 @@ def get_random_question():
 
     question = ",".join(random_question.split('\n')[1:])
     answer = ",".join(random_answer.split('\n')[1:])
-
     return question, answer
 
 
-if __name__ == '__main__':
-    env = Env()
-    env.read_env()
+def get_explanation(answer):
+    explanation_regex = re.compile("\[(.*)\]")
+    answer_explanation = explanation_regex.findall(answer)
 
-    random_question, answer = get_random_question()
-
-
-
+    if answer_explanation:
+        return answer_explanation[0]
 
 
-
-
+def get_clean_answer(answer):
+    clean_answer = answer.split('.')[0]
+    answer_explanation = get_explanation(clean_answer)
+    if answer_explanation:
+        clean_answer = clean_answer.split(']')[1]
+        return clean_answer, answer_explanation
+    else:
+        return clean_answer, None
