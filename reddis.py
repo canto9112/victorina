@@ -18,23 +18,3 @@ def connect_redis():
     )
     return db
 
-
-def record_user_question(db, user_id, question):
-    db.set(user_id, question)
-
-
-def get_user_question(db, user_id):
-    question = db.get(user_id)
-    return question
-
-
-db = connect_redis()
-user_id = '1224342333'
-quesiton = 'qeustion-2'
-
-record_user_question(db, user_id, quesiton)
-user_question = get_user_question(db, user_id)
-print(user_question)
-
-
-
