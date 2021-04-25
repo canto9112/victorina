@@ -63,7 +63,8 @@ def surrender(bot, update):
     db = reddis.connect_redis()
     answer = db.get(user_id)
     clean_answer, answer_explanation = questions.get_clean_answer(answer)
-    update.message.reply_text(f'Ответ: {clean_answer}')
+    update.message.reply_text(f'Ответ: {clean_answer}\n'
+                              f'Чтобы продолжить нажми Новый вопрос')
 
     return QUESTION
 
@@ -95,8 +96,7 @@ def main():
 
             QUESTION: [RegexHandler('Новый вопрос', handle_new_question_request)],
             ANSWER: [MessageHandler(Filters.text, answer)],
-            SURRENDER: [MessageHandler(Filters.text, surrender)],
-
+            SURRENDER: [RegexHandler('Сдаться', surrender)],
 
         },
 
