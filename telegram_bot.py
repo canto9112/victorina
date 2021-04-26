@@ -6,13 +6,14 @@ from telegram.ext import (CommandHandler, ConversationHandler, Filters, MessageH
 
 import questions
 import reddis
+from functools import partial
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-QUESTION, ANSWER, SURRENDER = range(3)
+QUESTION, ANSWER = range(2)
 
 
 def start(bot, update):
@@ -25,42 +26,34 @@ def start(bot, update):
     return QUESTION
 
 
-def handle_new_question_request(bot, update):
-    user_id = update['message']['chat']['id']
-    db = reddis.connect_redis()
+def handle_new_question_request(bot, update, db):
     question, answer = questions.get_random_question()
-    db.set(user_id, answer)
+    clean_answer, answer_explanation = questions.get_clean_answer(answer)
+
+    user_id = update['message']['chat']['id']
+
+    db.set(user_id, clean_answer)
     update.message.reply_text(question)
-    print('clean_answer', answer)
+    print('clean_answer', clean_answer)
 
     return ANSWER
 
 
-def answer(bot, update):
-    user_message = update['message']['text']
+def answer(bot, update, db):
     user_id = update['message']['chat']['id']
-    db = reddis.connect_redis()
+    user_message = update['message']['text']
     answer = db.get(user_id)
-
-    clean_answer, answer_explanation = questions.get_clean_answer(answer)
-
-    if user_message == clean_answer:
+    if user_message == answer:
         update.message.reply_text('Правильно! Поздравляю!')
         return QUESTION
-
-    elif user_message == 'Сдаться':
-        return SURRENDER
-
     else:
-        update.message.reply_text(f'Неправильно…\n'
-                                  f'Попробуешь ещё раз?')
+        update.message.reply_text('Не правильно! Попробуйте еще раз!')
         return ANSWER
 
 
-def surrender(bot, update):
+def surrender(bot, update, db):
     user_id = update['message']['chat']['id']
 
-    db = reddis.connect_redis()
     answer = db.get(user_id)
     clean_answer, answer_explanation = questions.get_clean_answer(answer)
     update.message.reply_text(f'Ответ: {clean_answer}\n'
@@ -89,15 +82,18 @@ def main():
     updater = Updater(telegam_token)
     dp = updater.dispatcher
 
+    db = reddis.connect_redis()
+
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
 
         states={
 
-            QUESTION: [RegexHandler('Новый вопрос', handle_new_question_request)],
-            ANSWER: [MessageHandler(Filters.text, answer)],
-            SURRENDER: [RegexHandler('Сдаться', surrender)],
-
+            QUESTION: [RegexHandler('Новый вопрос',
+                                    partial(handle_new_question_request, db=db))],
+            ANSWER: [RegexHandler('Сдаться', partial(surrender, db=db)),
+                     MessageHandler(Filters.text, partial(answer, db=db))
+                     ],
         },
 
         fallbacks=[CommandHandler('cancel', cancel)]
@@ -110,4 +106,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     main()
