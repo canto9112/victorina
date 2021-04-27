@@ -1,7 +1,7 @@
 import random
-from environs import Env
 
 import vk_api as vk
+from environs import Env
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkEventType, VkLongPoll
 
