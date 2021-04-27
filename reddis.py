@@ -17,4 +17,3 @@ def connect_redis():
         decode_responses=True
     )
     return db
-
