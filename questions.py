@@ -9,7 +9,7 @@ def open_file(file_path):
 
 
 def get_questions():
-    file = open_file('quiz-questions/9krug16.txt')
+    file = open_file('quiz-questions/120br.txt')
     content = file.split('\n\n')
     block_questions = []
     block_answers = []
