@@ -1,11 +1,9 @@
 import logging
 
-from environs import Env
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, ConversationHandler, Filters, MessageHandler, RegexHandler, Updater)
 
 import questions
-import reddis
 from functools import partial
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -75,15 +73,10 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
-def main():
-    env = Env()
-    env.read_env()
+def start_bot(token, db):
 
-    telegam_token = env('TELEGRAM_TOKEN')
-    updater = Updater(telegam_token)
+    updater = Updater(token)
     dp = updater.dispatcher
-
-    db = reddis.connect_redis()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
@@ -104,8 +97,3 @@ def main():
     dp.add_error_handler(error)
     updater.start_polling()
     updater.idle()
-
-
-if __name__ == '__main__':
-
-    main()
