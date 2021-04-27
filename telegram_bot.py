@@ -39,19 +39,20 @@ def handle_new_question_request(bot, update, db):
     return ANSWER
 
 
-def answer(bot, update, db):
+def handle_solution_attempt(bot, update, db):
     user_id = update['message']['chat']['id']
     user_message = update['message']['text']
     answer = db.get(user_id)
     if user_message == answer:
-        update.message.reply_text('Правильно! Поздравляю!')
+        update.message.reply_text('Правильно! Поздравляю!\n'
+                                  'Чтобы продолжить нажми Новый вопрос')
         return QUESTION
     else:
         update.message.reply_text('Не правильно! Попробуйте еще раз!')
         return ANSWER
 
 
-def surrender(bot, update, db):
+def handle_surrender(bot, update, db):
     user_id = update['message']['chat']['id']
 
     answer = db.get(user_id)
@@ -65,7 +66,7 @@ def surrender(bot, update, db):
 def cancel(bot, update):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text('Bye! I hope we can talk again some day.',
+    update.message.reply_text('Всего доброго!',
                               reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
@@ -91,8 +92,8 @@ def main():
 
             QUESTION: [RegexHandler('Новый вопрос',
                                     partial(handle_new_question_request, db=db))],
-            ANSWER: [RegexHandler('Сдаться', partial(surrender, db=db)),
-                     MessageHandler(Filters.text, partial(answer, db=db))
+            ANSWER: [RegexHandler('Сдаться', partial(handle_surrender, db=db)),
+                     MessageHandler(Filters.text, partial(handle_solution_attempt, db=db))
                      ],
         },
 
