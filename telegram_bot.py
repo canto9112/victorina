@@ -1,12 +1,12 @@
 import logging
 from functools import partial
-from environs import Env
-import reddis
 
+from environs import Env
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, ConversationHandler, Filters, MessageHandler, RegexHandler, Updater)
 
 import questions
+import reddis
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
