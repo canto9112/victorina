@@ -58,7 +58,7 @@ def handle_surrender(bot, update, db):
     return QUESTION
 
 
-def cancel(bot, update):
+def handle_cancel(bot, update):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text('Всего доброго!',
@@ -66,7 +66,7 @@ def cancel(bot, update):
     return ConversationHandler.END
 
 
-def error(bot, update, error):
+def handle_error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
@@ -91,11 +91,11 @@ def main():
                      ],
         },
 
-        fallbacks=[CommandHandler('cancel', cancel)]
+        fallbacks=[CommandHandler('cancel', handle_cancel)]
     )
 
     dp.add_handler(conv_handler)
-    dp.add_error_handler(error)
+    dp.add_error_handler(handle_error)
     updater.start_polling()
 
 
