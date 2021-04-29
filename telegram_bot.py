@@ -32,7 +32,7 @@ def handle_new_question_request(bot, update, db):
 
     user_id = update['message']['chat']['id']
 
-    db.set(user_id, clean_answer)
+    db.set(f'tg-{user_id}', clean_answer)
     update.message.reply_text(question)
     logger.info("Ответ должен быть", clean_answer)
 
