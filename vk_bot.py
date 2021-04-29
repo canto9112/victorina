@@ -6,7 +6,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 import questions
-import reddis
+import redis
 
 
 def send_message(event, vk_api, user_id, keyboard):
@@ -32,7 +32,7 @@ def main():
     env = Env()
     env.read_env()
     vk_token = env('VK_GROUP_TOKEN')
-    db = reddis.connect_redis()
+    db = redis.connect_redis()
     vk_session = vk.VkApi(token=vk_token)
     vk_api = vk_session.get_api()
     longpoll = VkLongPoll(vk_session)
