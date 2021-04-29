@@ -44,12 +44,12 @@ def main():
             user_message = event.text
 
             user_id = event.user_id
-            db_answer = db.get(user_id)
+            db_answer = db.get(f'vk-{user_id}')
 
             if user_message == "Новый вопрос":
                 question, answer = questions.get_random_question()
-                clean_answer, answer_explanation = questions.get_clean_answer(answer)
-                db.set(f'vk-{user_id}', clean_answer)
+                # clean_answer, answer_explanation = questions.get_clean_answer(answer)
+                db.set(f'vk-{user_id}', answer)
                 send_message(question, vk_api, user_id, keyboard)
 
             elif user_message == db_answer:
