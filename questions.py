@@ -1,5 +1,4 @@
 import random
-import re
 
 
 def open_file(file_path):
