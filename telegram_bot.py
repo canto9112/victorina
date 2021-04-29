@@ -28,7 +28,7 @@ def start(bot, update):
 
 def handle_new_question_request(bot, update, db):
     question, answer = questions.get_random_question()
-    clean_answer, answer_explanation = questions.get_clean_answer(answer)
+    clean_answer = questions.get_clean_answer(answer)
 
     user_id = update['message']['chat']['id']
 
@@ -47,9 +47,9 @@ def handle_solution_attempt(bot, update, db):
         update.message.reply_text('Правильно! Поздравляю!\n'
                                   'Чтобы продолжить нажми Новый вопрос')
         return QUESTION
-    else:
-        update.message.reply_text('Не правильно! Попробуйте еще раз!')
-        return ANSWER
+
+    update.message.reply_text('Не правильно! Попробуйте еще раз!')
+    return ANSWER
 
 
 def handle_surrender(bot, update, db):
