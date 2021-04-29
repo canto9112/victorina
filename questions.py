@@ -8,31 +8,35 @@ def open_file(file_path):
     return content
 
 
-def get_questions(filename):
-    file = open_file(f'quiz-questions/{filename}')
+def get_questions():
+    directory = os.listdir('quiz-questions')
+    all_questions = []
 
-    content = file.split('\n\n')
-    block_questions = []
-    block_answers = []
-    for block in content:
-        if block.startswith('Вопрос'):
-            block_questions.append(block)
+    for filename in directory:
+        file = open_file(f'quiz-questions/{filename}')
 
-        elif block.startswith('Ответ'):
+        content = file.split('\n\n')
+        block_questions = []
+        block_answers = []
+        for block in content:
+            if block.startswith('Вопрос'):
+                block_questions.append(block)
 
-            block_answers.append(block)
-    questions = dict(zip(block_questions, block_answers))
-    return questions
+            elif block.startswith('Ответ'):
+                block_answers.append(block)
+
+        questions = dict(zip(block_questions, block_answers))
+        all_questions.append(questions)
+    return all_questions
 
 
 def get_random_question():
-    directory = os.listdir('quiz-questions')
-    for file in directory:
-        questions = get_questions(file)
-        random_question, random_answer = random.choice(list(questions.items()))
-        question = ",".join(random_question.split('\n')[1:])
-        answer = ",".join(random_answer.split('\n')[1:])
-        clean_answer = answer.split('.')[0]
+    all_questions = get_questions()
 
-        return question, clean_answer
+    random_file = random.randint(0, len(all_questions) - 1)
+    random_question, random_answer = random.choice(list(all_questions[random_file].items()))
 
+    question = ",".join(random_question.split('\n')[1:])
+    answer = ",".join(random_answer.split('\n')[1:])
+    clean_answer = answer.split('.')[0]
+    return question, clean_answer

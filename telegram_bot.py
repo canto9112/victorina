@@ -6,7 +6,7 @@ from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, ConversationHandler, Filters, MessageHandler, RegexHandler, Updater)
 
 import questions
-import db
+import redis_db
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -74,7 +74,7 @@ def main():
     env = Env()
     env.read_env()
     telegam_token = env('TELEGRAM_TOKEN')
-    db = db.connect_redis()
+    db = redis_db.connect_redis()
 
     updater = Updater(telegam_token)
     dp = updater.dispatcher

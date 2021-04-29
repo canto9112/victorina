@@ -1,4 +1,4 @@
-import db
+import redis
 from environs import Env
 
 
@@ -10,7 +10,7 @@ def connect_redis():
     port = env('REDIS_PORT')
     password = env('REDIS_PASSWORD')
 
-    db = db.StrictRedis(
+    db = redis.StrictRedis(
         host=host,
         port=port,
         password=password,
