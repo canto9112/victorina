@@ -28,21 +28,17 @@ def start(bot, update):
 
 def handle_new_question_request(bot, update, db):
     question, answer = questions.get_random_question()
-    clean_answer = questions.get_clean_answer(answer)
-
     user_id = update['message']['chat']['id']
 
-    db.set(f'tg-{user_id}', clean_answer)
+    db.set(f'tg-{user_id}', answer)
     update.message.reply_text(question)
-    logger.info("Ответ должен быть", clean_answer)
-
     return ANSWER
 
 
 def handle_solution_attempt(bot, update, db):
     user_id = update['message']['chat']['id']
     user_message = update['message']['text']
-    answer = db.get(user_id)
+    answer = db.get(f'tg-{user_id}')
     if user_message == answer:
         update.message.reply_text('Правильно! Поздравляю!\n'
                                   'Чтобы продолжить нажми Новый вопрос')
@@ -55,9 +51,8 @@ def handle_solution_attempt(bot, update, db):
 def handle_surrender(bot, update, db):
     user_id = update['message']['chat']['id']
 
-    answer = db.get(user_id)
-    clean_answer, answer_explanation = questions.get_clean_answer(answer)
-    update.message.reply_text(f'Ответ: {clean_answer}\n'
+    answer = db.get(f'tg-{user_id}')
+    update.message.reply_text(f'Ответ: {answer}\n'
                               f'Чтобы продолжить нажми Новый вопрос')
 
     return QUESTION
