@@ -32,6 +32,4 @@ def get_random_question():
     question = ",".join(random_question.split('\n')[1:])
     answer = ",".join(random_answer.split('\n')[1:])
     clean_answer = answer.split('.')[0]
-    print(question)
-    print(clean_answer)
     return question, clean_answer
