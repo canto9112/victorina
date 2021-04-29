@@ -50,18 +50,19 @@ def main():
                 db.set(f'vk-{user_id}', answer)
                 send_message(question, vk_api, user_id, keyboard)
 
-            elif user_message == db.get(f'vk-{user_id}'):
-                send_message('Правильно! Поздравляю!\n'
-                             'Чтобы продолжить нажми Новый вопрос', vk_api, user_id, keyboard)
-
             elif user_message == 'Сдаться':
                 db_answer = db.get(f'vk-{user_id}')
                 send_message(f'Правильный ответ: {db_answer}\n'
                              f'Чтобы продолжить нажми Новый вопрос', vk_api, user_id, keyboard)
 
-            elif user_message != db.get(f'vk-{user_id}'):
-                send_message('Не правильно!\n'
-                             'Попробуйте еще раз!', vk_api, user_id, keyboard)
+            else:
+                answer = db.get(f'vk-{user_id}')
+                if user_message != answer:
+                    send_message('Не правильно!\n'
+                                 'Попробуйте еще раз!', vk_api, user_id, keyboard)
+                else:
+                    send_message('Правильно! Поздравляю!\n'
+                                 'Чтобы продолжить нажми Новый вопрос', vk_api, user_id, keyboard)
 
 
 if __name__ == '__main__':
