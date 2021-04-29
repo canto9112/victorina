@@ -9,7 +9,7 @@ def open_file(file_path):
 
 
 def get_questions():
-    file = open_file('quiz-questions/120br.txt')
+    file = open_file('quiz-questions/9krug16.txt')
     content = file.split('\n\n')
     block_questions = []
     block_answers = []
@@ -31,21 +31,7 @@ def get_random_question():
 
     question = ",".join(random_question.split('\n')[1:])
     answer = ",".join(random_answer.split('\n')[1:])
-    return question, answer
-
-
-def get_explanation(answer):
-    explanation_regex = re.compile("\[(.*)\]")
-    answer_explanation = explanation_regex.findall(answer)
-
-    if answer_explanation:
-        return answer_explanation[0]
-
-
-def get_clean_answer(answer):
     clean_answer = answer.split('.')[0]
-    answer_explanation = get_explanation(clean_answer)
-    if answer_explanation:
-        clean_answer = clean_answer.split(']')[1].strip()
-        return clean_answer, answer_explanation
-
+    print(question)
+    print(clean_answer)
+    return question, clean_answer
